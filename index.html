@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <!-- This is just a demo page so I have tried to pack everything in here will have a tech stack ready if this idea gets approved. -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BN STAR Meal Planner - Demo</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --danger-color: #dc2626;
+            --success-color: #16a34a;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #1e293b;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .cart {
+            border: 1px solid #cbd5e1;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .warning {
+            color: var(--danger-color);
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid var(--danger-color);
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .calendar {
+            border: 1px solid #cbd5e1;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .meal-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .meal-plan {
+            border: 1px solid #cbd5e1;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .product-card {
+            border: 1px solid #cbd5e1;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .summary {
+            background-color: #f1f5f9;
+            padding: 20px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BN STAR Meal Planner</h1>
+
+        <div class="form-group">
+            <h2>Personal Information</h2>
+            <div class="grid">
+                <div>
+                    <label for="weight">Current Weight (kg):</label>
+                    <input type="number" id="weight" required>
+
+                    <label for="target-weight">Target Weight (kg):</label>
+                    <input type="number" id="target-weight" required>
+
+                    <label for="height">Height (cm):</label>
+                    <input type="number" id="height" required>
+
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" required>
+
+                    <label for="activity">Activity Level:</label>
+                    <select id="activity">
+                        <option value="sedentary">Sedentary</option>
+                        <option value="light">Lightly Active</option>
+                        <option value="moderate">Moderately Active</option>
+                        <option value="very">Very Active</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="target-calories">Target Daily Calories:</label>
+                    <input type="number" id="target-calories" required>
+
+                    <label for="diet-preference">Dietary Preferences:</label>
+                     <select id="diet-preference" onchange="updateProductDisplay()">
+                        <option value="none">No Specific Diet</option>
+                        <option value="vegetarian">Vegetarian</option>
+                        <option value="vegan">Vegan</option>
+                        <option value="keto">Keto</option>
+                        <option value="paleo">Paleo</option>
+                    </select>
+
+                    <label for="allergies">Allergies/Restrictions:</label>
+                    <input type="text" id="allergies" placeholder="e.g., nuts, dairy, gluten">
+                </div>
+            </div>
+        </div>
+
+        <h2>Grocery Selection</h2>
+        <div class="product-list">
+            <div class="product-card" data-type="non-vegan">
+                <h3>Chicken Breast</h3>
+                <p>165 calories per serving</p>
+                <p>$6.99/lb</p>
+                <button onclick="addToCart('chicken-breast', 165, 6.99, true)">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <h3>Quinoa</h3>
+                <p>120 calories per serving</p>
+                <p>$4.99/lb</p>
+                <button onclick="addToCart('quinoa', 120, 4.99, true)">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <h3>Potato Chips</h3>
+                <p>160 calories per serving</p>
+                <p>$3.99/bag</p>
+                <button onclick="addToCart('chips', 160, 3.99, false)">Add to Cart</button>
+            </div>
+        </div>
+
+        <h2>Pre-made Meal Plans</h2>
+        <div class="meal-plans">
+            <div class="meal-plan">
+                <h3>Weight Loss Plan</h3>
+                <p>1500 calories/day</p>
+                <p>High protein, moderate carbs</p>
+                <p>$149.99/week</p>
+                <button onclick="window.location.assign('meal-plan-page.html')">Select Plan</button>
+            </div>
+            <div class="meal-plan">
+                <h3>Muscle Gain Plan</h3>
+                <p>2500 calories/day</p>
+                <p>High protein, high carbs</p>
+                <p>$179.99/week</p>
+                <button onclick="muscle-gain-plan.html">Select Plan</button>
+            </div>
+            <div class="meal-plan">
+                <h3>Balanced Nutrition</h3>
+                <p>2000 calories/day</p>
+                <p>Balanced macros</p>
+                <p>$129.99/week</p>
+                <button onclick="muscle-gain-plan.html">Select Plan</button>
+            </div>
+        </div>
+
+      <h2>Delivery Schedule</h2>
+        <div class="calendar">
+            <label for="delivery-frequency">Delivery Frequency:</label>
+            <select id="delivery-frequency">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="biweekly">Bi-weekly</option>
+            </select>
+
+            <label for="preferred-time">Preferred Delivery Time:</label>
+            <input type="time" id="preferred-time">
+
+            <label for="start-date">Start Date:</label>
+            <input type="date" id="start-date">
+        </div>
+        <br>
+        <div class="cart">
+            <h2>Meal Items</h2>
+            <div id="cart-items"></div>
+            <div id="warnings"></div>
+            <div class="summary">
+                <h3>Summary</h3>
+                <p>Total Calories: <span id="total-calories">0</span></p>
+                <p>Total Cost: $<span id="total-cost">0.00</span></p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <script>
+        let cart = [];
+        let totalCalories = 0;
+        let totalCost = 0;
+
+         function updateProductDisplay() {
+            const dietPreference = document.getElementById('diet-preference').value;
+            const nonVeganProducts = document.querySelectorAll('[data-type="non-vegan"]');
+
+            nonVeganProducts.forEach(product => {
+                if (dietPreference === 'vegan' || dietPreference === 'vegetarian') {
+                    product.style.display = 'none';
+                } else {
+                    product.style.display = 'block';
+                }
+            });
+        }
+
+        function addToCart(item, calories, cost, isHealthy) {
+            cart.push({ item, calories, cost, isHealthy });
+            updateCart();
+        }
+
+        function addMealPlan(plan) {
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartDiv = document.getElementById('cart-items');
+            const warningsDiv = document.getElementById('warnings');
+            cartDiv.innerHTML = '';
+            warningsDiv.innerHTML = '';
+
+            totalCalories = 0;
+            totalCost = 0;
+
+            cart.forEach(item => {
+                totalCalories += item.calories;
+                totalCost += item.cost;
+
+                cartDiv.innerHTML += `
+                    <div>
+                        <p>${item.item} - ${item.calories} calories - $${item.cost.toFixed(2)}</p>
+                    </div>
+                `;
+
+                if (!item.isHealthy) {
+                    warningsDiv.innerHTML += `
+                        <div class="warning">
+                            Warning: ${item.item} is considered a less healthy option
+                        </div>
+                    `;
+                }
+            });
+
+            const targetCalories = parseInt(document.getElementById('target-calories').value) || 2000;
+            if (totalCalories > targetCalories) {
+                warningsDiv.innerHTML += `
+                    <div class="warning">
+                        Warning: Total calories (${totalCalories}) exceed your target (${targetCalories})
+                    </div>
+                `;
+            }
+
+            document.getElementById('total-calories').textContent = totalCalories;
+            document.getElementById('total-cost').textContent = totalCost.toFixed(2) + '/' + document.getElementById('delivery-frequency').value;
+
+        }
+
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('change', updateCart);
+        });
+    </script>
+</body>
+</html>
